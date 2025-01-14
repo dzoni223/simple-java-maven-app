@@ -84,16 +84,15 @@
     	<version>3.6.2</version>
       </plugin>
     </plugins>
-    <distributionManagement>
-      <repository>
-        <id>artifactory-server</id>
-        <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
-      </repository>
-      <snapshotRepository>
-        <id>artifactory-server</id>
-        <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
-      </snapshotRepository>
-    </distributionManagement>
-
   </build>
+  <distributionManagement>
+    <repository>
+      <id>artifactory-server</id>
+      <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
+    </repository>
+    <snapshotRepository>
+      <id>artifactory-server</id>
+      <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
