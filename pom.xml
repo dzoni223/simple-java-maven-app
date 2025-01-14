@@ -87,11 +87,11 @@
     <distributionManagement>
       <repository>
         <id>artifactory-server</id>
-        <url>https://https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
+        <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
       </repository>
       <snapshotRepository>
         <id>artifactory-server</id>
-        <url>https://https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
+        <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
       </snapshotRepository>
     </distributionManagement>
 
