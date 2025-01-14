@@ -12,7 +12,7 @@ pipeline {
             steps {
                 withSonarQubeEnv(installationName: 'SonarQube', credentialsId: 'jenkins-sonar') {
                     sh 'mvn clean package sonar:sonar'
-		    sh 'mvn clean install artifactory:deploy'
+		    sh 'mvn clean install artifactory:publish'
                 }
             }
         }
