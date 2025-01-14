@@ -1,21 +1,18 @@
 pipeline {
     agent any
     stages {
-        stage('Build') { 
+	stage('Test SonarQube Connectivity') {
             steps {
-                sh 'mvn -B -DskipTests clean package' 
+                script {
+                    sh 'curl -v http://sonarqube:9000'
+                }
+            }
+        stage ('Scan and Build Jar File') {
+            steps {
+               withSonarQubeEnv(installationName: 'SonarQube', credentialsId: 'jenkins-sonar') {
+                sh 'mvn clean package sonar:sonar'
+                }
             }
         }
-	stage('SonarQube Analysis') {
-	            environment {
-	                SONARQUBE = 'SonarQube' // the name of the SonarQube server in Jenkins
-	            }
-	            steps {
-	                script {
-	                    // Run the SonarQube analysis
-	                    sh 'mvn sonar:sonar -Dsonar.host.url=http://localhost:9000'
-	                }
-	            }
-	        }
     }
 }
