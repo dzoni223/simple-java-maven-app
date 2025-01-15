@@ -17,8 +17,8 @@ pipeline {
                     def server = Artifactory.server('central') // Artifactory Server ID in Jenkins
                     def rtMaven = Artifactory.newMavenBuild()
 
-                    rtMaven.resolver server: server, releaseRepo: 'maven-repo'
-                    rtMaven.deployer server: server, releaseRepo: 'maven-repo'
+                    rtMaven.resolver server: server, releaseRepo: 'maven-repo', snapshotRepo: 'maven-repo'
+                    rtMaven.deployer server: server, releaseRepo: 'maven-repo', snapshotRepo: 'maven-repo'
 
                     rtMaven.run pom: 'pom.xml', goals: 'clean deploy'
                 }
