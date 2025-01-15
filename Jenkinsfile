@@ -29,7 +29,7 @@ pipeline {
                     def server = Artifactory.server(env.ARTIFACTORY_SERVER)
                     def rtMaven = Artifactory.newMavenBuild()
                     
-                    rtMaven.tool = 'Maven' // Name of Maven tool in Jenkins
+                    rtMaven.tool = 'maven' // Name of Maven tool in Jenkins
                     rtMaven.deployer server: server, 
                                      releaseRepo: 'maven-repo', 
                                      snapshotRepo: 'maven-repo'
