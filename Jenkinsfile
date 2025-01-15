@@ -31,8 +31,7 @@ pipeline {
                     def buildInfo = Artifactory.newBuildInfo()
 
                     rtMaven.tool = 'maven' // Name of Maven tool in Jenkins
-		    rtMaven.deployer = Artifactory.newMavenDeployer()
-		    rtMaven.deployer.repoKey = 'maven-repo'
+		    rtMaven.deployer = server.deploy( 'maven-repo' )
 		    rtMaven.deployer.server = server                    
                     rtMaven.run pom: 'pom.xml', goals: 'clean deploy', buildInfo: buildInfo
                     
