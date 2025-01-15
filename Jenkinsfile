@@ -12,8 +12,8 @@ pipeline {
             steps {
                 withSonarQubeEnv(installationName: 'SonarQube', credentialsId: 'jenkins-sonar') {
                     sh 'mvn clean package sonar:sonar'
-		    sh 'mvn clean install -e -X artifactory:publish -Dartifactory.repoKey=maven-repo'
                 }
+		    sh 'mvn clean install -e -X artifactory:publish -Dartifactory.repoKey=maven-repo'
             }
         }
     }
