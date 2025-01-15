@@ -10,14 +10,16 @@ pipeline {
     }
     stages {
 	stage ('Artifactory configuration') {
-	    rtMavenDeployer (
+	    steps{
+	        rtMavenDeployer (
                     id: "MAVEN_DEPLOYER",
                     serverId: "artifactory-server",
                     releaseRepo: maven-repo,
                     snapshotRepo: maven-repo,
 		    deployArtifacts: true
                 )
-	}
+	    }	
+    	}
         stage('Test SonarQube Connectivity') {
             steps {
                 script {
