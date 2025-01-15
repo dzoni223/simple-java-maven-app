@@ -40,7 +40,7 @@ pipeline {
                     deployerId: "MAVEN_DEPLOYER",
                 )
 		rtPublishBuildInfo (
-                    serverId: "ARTIFACTORY_SERVER"
+                    serverId: 'artifactory-server'
                 )                
             }
         }
