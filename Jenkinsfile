@@ -9,6 +9,15 @@ pipeline {
         ARTIFACTORY_SERVER = 'artifactory-server' // Artifactory server ID in Jenkins
     }
     stages {
+	stage ('Artifactory configuration') {
+	    rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "artifactory-server",
+                    releaseRepo: maven-repo,
+                    snapshotRepo: maven-repo,
+		    deployArtifacts: true
+                )
+	}
         stage('Test SonarQube Connectivity') {
             steps {
                 script {
@@ -25,18 +34,15 @@ pipeline {
         }
         stage('Deploy to Artifactory') {
             steps {
-                script {
-                    def server = Artifactory.server(env.ARTIFACTORY_SERVER)
-                    def rtMaven = Artifactory.newMavenBuild()
-                    def buildInfo = Artifactory.newBuildInfo()
-
-                    rtMaven.tool = 'maven' // Name of Maven tool in Jenkins
-		    rtMaven.deployer = server.deploy( 'maven-repo' )
-		    rtMaven.deployer.server = server                    
-                    rtMaven.run pom: 'pom.xml', goals: 'clean deploy', buildInfo: buildInfo
-                    
-                    server.publishBuildInfo(buildInfo)
-                }
+		rtMavenRun (
+                    tool: maven, // Tool name from Jenkins configuration
+                    pom: 'pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER",
+                )
+		rtPublishBuildInfo (
+                    serverId: "ARTIFACTORY_SERVER"
+                )                
             }
         }
     }
