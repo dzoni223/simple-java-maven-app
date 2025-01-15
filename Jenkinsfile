@@ -13,7 +13,15 @@ pipeline {
                 withSonarQubeEnv(installationName: 'SonarQube', credentialsId: 'jenkins-sonar') {
                     sh 'mvn clean package sonar:sonar'
                 }
-		    sh 'mvn clean install -e -X artifactory:publish -Dartifactory.repoKey=maven-repo'
+		script {
+                    def server = Artifactory.server('central') // Artifactory Server ID in Jenkins
+                    def rtMaven = Artifactory.newMavenBuild()
+
+                    rtMaven.resolver server: server, releaseRepo: 'maven-repo'
+                    rtMaven.deployer server: server, releaseRepo: 'maven-repo'
+
+                    rtMaven.run pom: 'pom.xml', goals: 'clean deploy'
+                }
             }
         }
     }
