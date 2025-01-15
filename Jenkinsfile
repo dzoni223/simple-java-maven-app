@@ -28,15 +28,15 @@ pipeline {
                 script {
                     def server = Artifactory.server(env.ARTIFACTORY_SERVER)
                     def rtMaven = Artifactory.newMavenBuild()
-                    
+                    def buildInfo = Artifactory.newBuildInfo()
+
                     rtMaven.tool = 'maven' // Name of Maven tool in Jenkins
-                    rtMaven.deployer server: server, 
-                                     releaseRepo: 'maven-repo', 
-                                     snapshotRepo: 'maven-repo'
+		    rtMaven.deployer = Artifactory.newMavenDeployer()
+		    rtMaven.deployer.repoKey = 'maven-repo'
+		    rtMaven.deployer.server = server                    
+                    rtMaven.run pom: 'pom.xml', goals: 'clean deploy', buildInfo: buildInfo
                     
-                    rtMaven.run pom: 'pom.xml', goals: 'clean deploy'
-                    
-                    server.publishBuildInfo(rtMaven.deployer)
+                    server.publishBuildInfo(buildInfo)
                 }
             }
         }
