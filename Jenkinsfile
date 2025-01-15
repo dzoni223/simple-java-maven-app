@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    tools {
-        maven 'maven' // Replace 'Maven' with the name of your Maven installation in Jenkins
-    }
     environment {
         SONAR_HOST_URL = 'http://sonarqube:9000' // SonarQube URL
         SONARQUBE_CREDENTIALS = 'jenkins-sonar' // Jenkins credentials for SonarQube
