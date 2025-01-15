@@ -11,8 +11,8 @@ pipeline {
 	        rtMavenDeployer (
                     id: "MAVEN_DEPLOYER",
                     serverId: "artifactory-server",
-                    releaseRepo: maven-repo,
-                    snapshotRepo: maven-repo,
+                    releaseRepo: 'maven-repo',
+                    snapshotRepo: 'maven-repo',
 		    deployArtifacts: true
                 )
 	    }	
