@@ -87,12 +87,14 @@
   </build>
   <distributionManagement>
     <repository>
-      <id>artifactory-server</id>
-      <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
+        <id>central</id>
+        <name>a0rmz25bfdtbx-artifactory-primary-0-releases</name>
+        <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
     </repository>
     <snapshotRepository>
-      <id>artifactory-server</id>
-      <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
+        <id>snapshots</id>
+        <name>a0rmz25bfdtbx-artifactory-primary-0-snapshots</name>
+        <url>https://trialy8df2g.jfrog.io/artifactory/maven-repo</url>
     </snapshotRepository>
-  </distributionManagement>
+</distributionManagement>
 </project>
