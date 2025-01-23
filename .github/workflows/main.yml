@@ -26,13 +26,19 @@ jobs:
     - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-    # Step 4: Log in to AWS ECR
+    # Step 4: Set up AWS Credentials and Region
+    - name: Set up AWS credentials and region
+      run: |
+        echo "[default]" > ~/.aws/config
+        echo "region=${{ secrets.AWS_REGION }}" >> ~/.aws/config
+      env:
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+
+    # Step 5: Log in to AWS ECR
     - name: Log in to AWS ECR
       uses: aws-actions/amazon-ecr-login@v1
-      with:
-        region: ${{ secrets.AWS_REGION }}
 
-    # Step 5: Build the Docker image with multiple tags
+    # Step 6: Build the Docker image with multiple tags
     - name: Build Docker image
       run: |
         # DockerHub tag
@@ -45,17 +51,17 @@ jobs:
         ECR_URI=$(aws ecr describe-repositories --repository-names my-app --region ${{ secrets.AWS_REGION }} --query "repositories[0].repositoryUri" --output text)
         docker tag ${{ secrets.DOCKER_USERNAME }}/my-app:latest $ECR_URI:latest
 
-    # Step 6: Push Docker image to DockerHub
+    # Step 7: Push Docker image to DockerHub
     - name: Push Docker image to DockerHub
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/my-app:latest
 
-    # Step 7: Push Docker image to GitHub Container Registry
+    # Step 8: Push Docker image to GitHub Container Registry
     - name: Push Docker image to GitHub Container Registry
       run: |
         docker push ghcr.io/${{ github.repository_owner }}/my-app:latest
 
-    # Step 8: Push Docker image to AWS ECR
+    # Step 9: Push Docker image to AWS ECR
     - name: Push Docker image to AWS ECR
       run: |
         ECR_URI=$(aws ecr describe-repositories --repository-names my-app --region ${{ secrets.AWS_REGION }} --query "repositories[0].repositoryUri" --output text)
