@@ -26,6 +26,12 @@ jobs:
     - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
+      with:
+        role-to-assume: arn:aws:iam::940482435521:user/ecr
+        aws-region: secrets.AWS_REGION
+    
     # Step 5: Log in to AWS ECR
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
