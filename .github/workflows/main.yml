@@ -3,8 +3,8 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main # Run workflow on pushes to the main branch
-  workflow_dispatch: # Allow manual trigger
+      - main
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -26,18 +26,35 @@ jobs:
     - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-    # Step 4: Build the Docker image with two tags (DockerHub and GHCR)
+    # Step 4: Log in to AWS ECR
+    - name: Log in to AWS ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    # Step 5: Build the Docker image with multiple tags
     - name: Build Docker image
       run: |
+        # DockerHub tag
         docker build -t ${{ secrets.DOCKER_USERNAME }}/my-app:latest .
+
+        # GHCR tag
         docker tag ${{ secrets.DOCKER_USERNAME }}/my-app:latest ghcr.io/${{ github.repository_owner }}/my-app:latest
 
-    # Step 5: Push Docker image to DockerHub
+        # AWS ECR tag
+        ECR_URI=$(aws ecr describe-repositories --repository-names my-app --region ${{ secrets.AWS_REGION }} --query "repositories[0].repositoryUri" --output text)
+        docker tag ${{ secrets.DOCKER_USERNAME }}/my-app:latest $ECR_URI:latest
+
+    # Step 6: Push Docker image to DockerHub
     - name: Push Docker image to DockerHub
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/my-app:latest
 
-    # Step 6: Push Docker image to GitHub Container Registry
+    # Step 7: Push Docker image to GitHub Container Registry
     - name: Push Docker image to GitHub Container Registry
       run: |
         docker push ghcr.io/${{ github.repository_owner }}/my-app:latest
+
+    # Step 8: Push Docker image to AWS ECR
+    - name: Push Docker image to AWS ECR
+      run: |
+        ECR_URI=$(aws ecr describe-repositories --repository-names my-app --region ${{ secrets.AWS_REGION }} --query "repositories[0].repositoryUri" --output text)
+        docker push $ECR_URI:latest
