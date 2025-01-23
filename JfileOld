@@ -1,21 +1,49 @@
 pipeline {
     agent any
+    environment {
+        SONAR_HOST_URL = 'http://sonarqube:9000' // SonarQube URL
+        SONARQUBE_CREDENTIALS = 'jenkins-sonar' // Jenkins credentials for SonarQube
+        ARTIFACTORY_SERVER = 'artifactory-server' // Artifactory server ID in Jenkins
+    }
     stages {
-        stage('Build') { 
+	stage ('Artifactory configuration') {
+	    steps{
+	        rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "artifactory-server",
+                    releaseRepo: 'maven-repo',
+                    snapshotRepo: 'maven-repo',
+		    deployArtifacts: true
+                )
+	    }	
+    	}
+        stage('Test SonarQube Connectivity') {
             steps {
-                sh 'mvn -B -DskipTests clean package' 
+                script {
+                    sh 'curl -v $SONAR_HOST_URL'
+                }
             }
         }
-	stage('SonarQube Analysis') {
-	            environment {
-	                SONARQUBE = 'SonarQube' // the name of the SonarQube server in Jenkins
-	            }
-	            steps {
-	                script {
-	                    // Run the SonarQube analysis
-	                    sh 'mvn sonar:sonar -Dsonar.host.url=http://localhost:9000'
-	                }
-	            }
-	        }
+        stage('Scan and Build Jar File') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn clean package sonar:sonar'
+                }
+            }
+        }
+        stage('Deploy to Artifactory') {
+            steps {
+		rtMavenRun (
+                    tool: 'maven', // Tool name from Jenkins configuration
+                    pom: 'pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER",
+                )
+		rtPublishBuildInfo (
+                    serverId: 'artifactory-server'
+                )                
+            }
+        }
     }
 }
+
