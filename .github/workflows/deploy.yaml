@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main # This will trigger the workflow when there’s a push to the main branch
+  workflow_dispatch:
 
 jobs:
   deploy:
