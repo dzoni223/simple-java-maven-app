@@ -18,7 +18,7 @@ jobs:
       - name: Set up kubeconfig
         run: |
           mkdir -p /home/runner/.kube
-          echo "${{ secrets.KUBECONFIG_DATA }}" > /home/runner/.kube/config
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /home/runner/.kube/config
           chmod 600 /home/runner/.kube/config
           export KUBECONFIG=/home/runner/.kube/config
 
