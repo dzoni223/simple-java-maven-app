@@ -15,7 +15,7 @@ jobs:
 
       - name: Set up K3s access
         run: |
-          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          export KUBECONFIG=/home/nikola/.kube/config
           kubectl get nodes
 
       - name: Deploy App to K3s
