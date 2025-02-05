@@ -3,7 +3,7 @@ name: Deploy to K3s
 on:
   push:
     branches:
-      - main # This will trigger the workflow when there’s a push to the main branch
+      - main  # This triggers the workflow when there’s a push to the main branch
   workflow_dispatch:
 
 jobs:
@@ -20,13 +20,12 @@ jobs:
 
       - name: Deploy App to K3s
         run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
 
       - name: Wait for App to be Ready
-        run: kubectl rollout status deployment/my-app
-
-
+        run: |
+          kubectl rollout status deployment/my-app --timeout=60s
 # jobs:
 #   deploy:
 #     runs-on: ubuntu-latest
