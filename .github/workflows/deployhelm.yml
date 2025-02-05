@@ -1,0 +1,32 @@
+name: Deploy to K3s with Helm
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # - name: Install Helm
+      #   run: |
+      #     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      #     helm version
+
+      - name: Set up K3s access
+        run: |
+          export KUBECONFIG=/home/nikola/.kube/config
+          kubectl get nodes
+
+      - name: Deploy App with Helm
+        run: |
+          helm upgrade --install my-app ./my-app --namespace default --create-namespace
+          
+      - name: Wait for App to be Ready
+        run: |
+          kubectl rollout status deployment/my-app --timeout=60s
