@@ -75,6 +75,4 @@ jobs:
 #       # Step 5: Check deployment status
 #       - name: Verify Deployment
 #         run: |
-          kubectl rollout status deployment/my-deployment
-
-
+#         kubectl rollout status deployment/my-deployment
