@@ -8,53 +8,74 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-      # Step 1: Checkout the repository code
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up kubeconfig
+      - name: Set up K3s access
         run: |
-          mkdir -p /home/runner/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /home/runner/.kube/config
-          chmod 600 /home/runner/.kube/config
-          export KUBECONFIG=/home/runner/.kube/config
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl get nodes
 
-      - name: Debug kubeconfig
-        run: |
-          ls -lah /home/runner/.kube/
-          cat /home/runner/.kube/config
-
-      - name: Deploy to Kubernetes
-        run: |
-          export KUBECONFIG=/home/runner/.kube/config
-          kubectl get nodes  # Test connection
-          kubectl apply -f k8s/deployment.yml
-
-
-      # Step 2: Set up Kubernetes
-      #- name: Set up Kubeconfig
-      #  run: |
-      #    echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-
-      # Step 3: Install kubectl (if not already pre-installed)
-      - name: Install kubectl
-        run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl
-
-      # Step 4: Apply the Kubernetes manifests to deploy the app
-      - name: Deploy to K3s
+      - name: Deploy App to K3s
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
 
-      # Step 5: Check deployment status
-      - name: Verify Deployment
-        run: |
+      - name: Wait for App to be Ready
+        run: kubectl rollout status deployment/my-app
+
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # Step 1: Checkout the repository code
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+
+#       - name: Set up kubeconfig
+#         run: |
+#           mkdir -p /home/runner/.kube
+#           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /home/runner/.kube/config
+#           chmod 600 /home/runner/.kube/config
+#           export KUBECONFIG=/home/runner/.kube/config
+
+#       - name: Debug kubeconfig
+#         run: |
+#           ls -lah /home/runner/.kube/
+#           cat /home/runner/.kube/config
+
+#       - name: Deploy to Kubernetes
+#         run: |
+#           export KUBECONFIG=/home/runner/.kube/config
+#           kubectl get nodes  # Test connection
+#           kubectl apply -f k8s/deployment.yml
+
+
+#       # Step 2: Set up Kubernetes
+#       #- name: Set up Kubeconfig
+#       #  run: |
+#       #    echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+
+#       # Step 3: Install kubectl (if not already pre-installed)
+#       - name: Install kubectl
+#         run: |
+#           curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kubectl
+#           chmod +x ./kubectl
+#           sudo mv ./kubectl /usr/local/bin/kubectl
+
+#       # Step 4: Apply the Kubernetes manifests to deploy the app
+#       - name: Deploy to K3s
+#         run: |
+#           kubectl apply -f k8s/deployment.yaml
+#           kubectl apply -f k8s/service.yaml
+
+#       # Step 5: Check deployment status
+#       - name: Verify Deployment
+#         run: |
           kubectl rollout status deployment/my-deployment
 
 
